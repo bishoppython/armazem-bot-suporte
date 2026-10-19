@@ -98,9 +98,10 @@ O CI roda a avaliação no modo demo a cada push e falha se a nota cair abaixo d
 
 ## Próximos passos
 
+- Transcrição de áudio do WhatsApp com Whisper (faster-whisper na GPU); hoje o bot pede para o cliente escrever.
 - Conjunto de avaliação separado (held-out) e LLM como juiz para respostas abertas.
 - Ferramentas: status do pedido (API do Projeto 4) e estoque em tempo real (Projeto 1).
-- pgvector no Postgres para bases maiores; avaliação com LLM como juiz.
+- pgvector no Postgres para bases maiores.
 
 ## Créditos
 
