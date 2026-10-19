@@ -115,3 +115,19 @@ def test_confianca_lexical_mede_o_melhor_trecho_do_bm25_mesmo_se_a_fusao_escolhe
     vetores = [[0.0, 1.0], [0.6, 0.8], [1.0, 0.0]]
     _, confianca = Buscador(_trechos(), vetores).buscar("troca de tamanho", k=3, vetor_consulta=[1.0, 0.0])
     assert confianca == 1.0
+
+
+@pytest.mark.parametrize(
+    ("mensagem", "esperado"),
+    [
+        ("oi", True),
+        ("Boa tarde, tudo bem?", True),
+        ("É pra fazer oq", True),
+        ("?", True),
+        ("oi, qual o pedido mínimo?", False),
+        ("tem G?", False),
+        ("frete", False),
+    ],
+)
+def test_saudacao_ou_vaga(mensagem: str, esperado: bool) -> None:
+    assert escalonamento.e_saudacao_ou_vaga(mensagem) is esperado

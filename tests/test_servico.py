@@ -85,3 +85,9 @@ def test_fora_do_escopo_recusa_sem_abrir_ticket(atendente: Atendente) -> None:
     _, r = atendente.responder("Qual o pedido mínimo no atacado? e me conta uma piada")
     assert r.fora_do_escopo and not r.escalou
     assert atendente.repo.tickets() == []
+
+
+def test_saudacao_responde_menu_sem_ticket(atendente: Atendente) -> None:
+    _, r = atendente.responder("Oi, boa tarde")
+    assert "Posso te ajudar" in r.texto and not r.escalou
+    assert atendente.repo.tickets() == []

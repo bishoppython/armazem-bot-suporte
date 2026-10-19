@@ -11,7 +11,8 @@ STOPWORDS = frozenset(
     porque pq isso esse essa este esta aquilo mais menos muito pouco ja ainda tambem so sim
     nao oi ola bom boa dia tarde noite obrigado obrigada favor gostaria queria quero saber
     pode posso vocês vou ate entre veio vem funciona fica fazer faz tenho preciso precisa
-    dar da existe alguma algum vcs
+    dar da existe alguma algum vcs oq oque q ne ai la entao aqui tudo bem beleza blz td
+    opa eai
     """.split()
 )
 
@@ -42,6 +43,8 @@ _SINONIMOS = {
 }
 
 _TOKEN = re.compile(r"[a-z0-9]+")
+# Tamanhos de roupa de uma letra continuam sendo termos ("tem G?").
+_TAMANHOS = frozenset({"p", "m", "g"})
 
 
 def sem_acento(texto: str) -> str:
@@ -60,4 +63,6 @@ def radical(palavra: str) -> str:
 
 def tokens(texto: str) -> list[str]:
     limpo = sem_acento(texto.lower())
-    return [radical(p) for p in _TOKEN.findall(limpo) if p not in STOPWORDS and len(p) > 1]
+    return [
+        radical(p) for p in _TOKEN.findall(limpo) if p not in STOPWORDS and (len(p) > 1 or p in _TAMANHOS)
+    ]

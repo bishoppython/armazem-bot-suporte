@@ -3,7 +3,7 @@
 import re
 
 from bot_suporte.domain.modelos import Motivo
-from bot_suporte.domain.texto import sem_acento
+from bot_suporte.domain.texto import sem_acento, tokens
 
 _PEDIDO_HUMANO = re.compile(
     r"\b(atendente|humano|pessoa de verdade|alguem da (loja|equipe)|"
@@ -22,3 +22,12 @@ def motivo_por_mensagem(mensagem: str) -> Motivo | None:
     if _SENSIVEL.search(texto):
         return Motivo.TEMA_SENSIVEL
     return None
+
+
+_SAUDACAO = re.compile(r"^\W*(oi+|ola|opa|e ai|eai|bom dia|boa tarde|boa noite|tudo bem|hello|hi)\b")
+
+
+def e_saudacao_ou_vaga(mensagem: str) -> bool:
+    """Cumprimento ou mensagem sem nenhum termo de conteúdo: pede um menu, não um ticket."""
+    termos = tokens(mensagem)
+    return not termos or (bool(_SAUDACAO.search(sem_acento(mensagem.lower()))) and len(termos) <= 1)

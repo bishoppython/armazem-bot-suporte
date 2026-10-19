@@ -29,6 +29,15 @@ MSG_SEM_RESPOSTA = (
     "Passei sua pergunta para uma pessoa da equipe, que vai te responder por aqui."
 )
 MSG_SENSIVEL = "Sinto muito pelo transtorno. Já abri um atendimento com a nossa equipe para resolver isso."
+MSG_BOAS_VINDAS = (
+    "Oi! Sou a assistente virtual do {empresa}. Posso te ajudar com:\n"
+    "• produtos e preços (varejo e atacado)\n"
+    "• pedido mínimo e compras no atacado\n"
+    "• prazos de entrega e frete\n"
+    "• trocas, devoluções e garantia\n"
+    "• camisetas personalizadas com a sua logo\n"
+    'É só perguntar. Se preferir falar com uma pessoa, escreva "atendente".'
+)
 MSG_FORA_DO_ESCOPO = (
     "Esse assunto foge do que eu consigo ajudar por aqui. "
     "Posso tirar dúvidas sobre produtos, preços, atacado, entregas, trocas e personalização."
@@ -125,6 +134,8 @@ class Atendente:
         motivo = escalonamento.motivo_por_mensagem(texto)
         if motivo is Motivo.PEDIDO_HUMANO:
             return Resposta(MSG_HUMANO, motivo_escalonamento=motivo)
+        if motivo is None and escalonamento.e_saudacao_ou_vaga(texto):
+            return Resposta(MSG_BOAS_VINDAS.format(empresa=self.empresa))
 
         consulta = texto
         # Pergunta curta de continuação ("e no atacado?") herda o contexto da anterior.
