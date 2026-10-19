@@ -154,6 +154,9 @@ class Atendente:
                     return r
             return Resposta(MSG_SENSIVEL + " " + MSG_HUMANO, motivo_escalonamento=motivo, confianca=confianca)
 
+        if confianca < self.config.limiar_confianca and len(tokens(texto)) <= 1:
+            # "não entendi", "hã?": quem não sabe o que perguntar recebe o menu, não um ticket.
+            return Resposta(MSG_BOAS_VINDAS.format(empresa=self.empresa), confianca=confianca)
         if confianca < self.config.limiar_confianca:
             return Resposta(
                 MSG_SEM_RESPOSTA, motivo_escalonamento=Motivo.BAIXA_CONFIANCA, confianca=confianca

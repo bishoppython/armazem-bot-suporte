@@ -91,3 +91,8 @@ def test_saudacao_responde_menu_sem_ticket(atendente: Atendente) -> None:
     _, r = atendente.responder("Oi, boa tarde")
     assert "Posso te ajudar" in r.texto and not r.escalou
     assert atendente.repo.tickets() == []
+
+
+def test_mensagem_curta_sem_confianca_mostra_menu(atendente: Atendente) -> None:
+    _, r = atendente.responder("Não entendi")
+    assert "Posso te ajudar" in r.texto and not r.escalou
