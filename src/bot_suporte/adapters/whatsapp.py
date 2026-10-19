@@ -27,6 +27,18 @@ def extrair_mensagem(evento: dict[str, Any]) -> tuple[str, str] | None:
     return jid.split("@")[0], str(texto)
 
 
+def resumo_evento(evento: dict[str, Any]) -> str:
+    """Estrutura do evento para o log, sem números de telefone nem texto da mensagem."""
+    dados = evento.get("data") or {}
+    chave = dados.get("key") or {}
+    jid = str(chave.get("remoteJid", ""))
+    return (
+        f"event={evento.get('event')} jid=*{jid[jid.find('@') :] if '@' in jid else jid[-4:]} "
+        f"fromMe={chave.get('fromMe')} chaves_key={sorted(chave)} "
+        f"tipos_msg={sorted((dados.get('message') or {}).keys())} chaves_data={sorted(dados)}"
+    )
+
+
 class EvolutionAPI:
     def __init__(
         self, base_url: str, api_key: str, instancia: str, transport: httpx.BaseTransport | None = None

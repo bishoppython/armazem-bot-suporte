@@ -1,6 +1,7 @@
 """API HTTP: chat web, tickets e custo."""
 
 import json
+import logging
 from functools import lru_cache
 from importlib.resources import files
 from typing import Annotated
@@ -10,9 +11,11 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from bot_suporte.adapters.whatsapp import EvolutionAPI, extrair_mensagem
+from bot_suporte.adapters.whatsapp import EvolutionAPI, extrair_mensagem, resumo_evento
 from bot_suporte.config import Config
 from bot_suporte.servico import Atendente
+
+log = logging.getLogger(__name__)
 
 
 class PedidoChat(BaseModel):
@@ -93,8 +96,10 @@ def criar_app() -> FastAPI:
     async def webhook_whatsapp(
         request: Request, tarefas: BackgroundTasks, at: Dep, whats: DepWhats
     ) -> dict[str, str]:
-        recebida = extrair_mensagem(await request.json())
+        evento = await request.json()
+        recebida = extrair_mensagem(evento)
         if recebida is None or whats is None:
+            log.info("webhook ignorado: %s", resumo_evento(evento))
             return {"status": "ignorado"}
         # Responde ao webhook na hora; o LLM roda em segundo plano para a Evolution não reenviar.
         tarefas.add_task(responder_whatsapp, at, whats, *recebida)
