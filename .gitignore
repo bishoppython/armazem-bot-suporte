@@ -1,0 +1,20 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# dados locais
+dados/
+.env
+.env.*
+!.env.example
+avaliacao/resultados/ultima.json
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/

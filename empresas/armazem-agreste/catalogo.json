@@ -1,0 +1,18 @@
+[
+  {"sku": "MA-CAM-001", "nome": "Camiseta Moda Agreste branca", "categoria": "camiseta",
+   "descricao": "Camiseta 100% algodão fio 30.1 penteado, gola careca, estampa Moda Agreste no peito.",
+   "preco_varejo": 59.90, "preco_atacado": 34.90, "tamanhos": ["P", "M", "G", "GG", "XG"],
+   "cores": ["branca", "preta", "areia"], "estoque": 240, "imagem": "catalogo/camiseta-branca.jpg"},
+  {"sku": "MA-ECO-001", "nome": "Ecobag Moda Agreste preta", "categoria": "ecobag",
+   "descricao": "Ecobag de lona de algodão cru tingida, 38 x 42 cm, alça de 60 cm, estampa frontal.",
+   "preco_varejo": 39.90, "preco_atacado": 22.90, "tamanhos": ["único"],
+   "cores": ["preta"], "estoque": 85, "imagem": "catalogo/ecobag-preta.jpg"},
+  {"sku": "MA-ECO-002", "nome": "Ecobag Moda Agreste natural", "categoria": "ecobag",
+   "descricao": "Ecobag de lona de algodão cru na cor natural, 38 x 42 cm, alça de 60 cm, estampa frontal.",
+   "preco_varejo": 39.90, "preco_atacado": 22.90, "tamanhos": ["único"],
+   "cores": ["natural"], "estoque": 0, "imagem": "catalogo/ecobag-na-mao.jpg"},
+  {"sku": "MA-MOL-001", "nome": "Moletom Moda Agreste careca", "categoria": "moletom",
+   "descricao": "Moletom flanelado 50% algodão, sem capuz, estampa grande nas costas.",
+   "preco_varejo": 149.90, "preco_atacado": 89.90, "tamanhos": ["P", "M", "G", "GG"],
+   "cores": ["cinza mescla", "preto"], "estoque": 32, "imagem": "catalogo/moletom-costas.jpg"}
+]

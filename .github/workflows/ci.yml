@@ -1,0 +1,20 @@
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  qualidade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.12"
+      - run: uv sync --frozen
+      - name: Lint e tipos
+        run: make lint
+      - name: Testes
+        run: make test
+      - name: Avaliação (busca e escalonamento, sem LLM)
+        run: make avaliar-demo

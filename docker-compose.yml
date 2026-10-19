@@ -1,0 +1,26 @@
+# docker compose up                     → bot em modo demo (sem LLM), em http://localhost:8000
+# docker compose --profile ia up        → bot + Ollama com LLM e embeddings locais
+services:
+  bot:
+    build: .
+    ports: ["127.0.0.1:8000:8000"]
+    environment:
+      BOT_MODO_DEMO: ${BOT_MODO_DEMO:-true}
+      BOT_LLM_BASE_URL: ${BOT_LLM_BASE_URL:-http://ollama:11434/v1}
+      BOT_LLM_API_KEY: ${BOT_LLM_API_KEY:-ollama}
+      BOT_LLM_MODELO: ${BOT_LLM_MODELO:-qwen3.5:4b}
+      BOT_EMBED_MODELO: ${BOT_EMBED_MODELO:-nomic-embed-text}
+    volumes: ["dados:/app/dados"]
+
+  ollama:
+    image: ollama/ollama:0.12.6
+    profiles: ["ia"]
+    volumes: ["ollama:/root/.ollama"]
+    deploy:
+      resources:
+        reservations:
+          devices: [{driver: nvidia, count: all, capabilities: [gpu]}]
+
+volumes:
+  dados:
+  ollama:
