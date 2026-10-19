@@ -52,3 +52,32 @@ def test_webhook_responde_no_whatsapp_com_foto_do_produto(atendente: Atendente) 
     assert enviados[1][1]["mediatype"] == "image"
     # A conversa fica ligada ao número: a próxima mensagem cai na mesma conversa.
     assert atendente.repo.obter_ou_criar_conversa(None, "whatsapp", "5581900000000")
+
+
+def test_imagem_com_legenda_vira_pergunta_e_audio_vira_aviso() -> None:
+    com_legenda = _evento("")
+    com_legenda["data"]["message"] = {"imageMessage": {"caption": "tem essa em G?"}}
+    assert extrair_mensagem(com_legenda) == ("5581900000000", "tem essa em G?")
+    audio = _evento("")
+    audio["data"]["message"] = {"audioMessage": {"seconds": 7}, "messageContextInfo": {}}
+    assert extrair_mensagem(audio) == ("5581900000000", None)
+    reacao = _evento("")
+    reacao["data"]["message"] = {"reactionMessage": {"text": "👍"}}
+    assert extrair_mensagem(reacao) is None
+
+
+def test_audio_recebe_pedido_para_escrever(atendente: Atendente) -> None:
+    enviados: list[dict[str, Any]] = []
+
+    def registrar(req: httpx.Request) -> httpx.Response:
+        enviados.append(json.loads(req.content))
+        return httpx.Response(201, json={})
+
+    whats = EvolutionAPI("http://evo", "chave", "armazem-agreste", transport=httpx.MockTransport(registrar))
+    app = api.criar_app()
+    app.dependency_overrides[api.atendente] = lambda: atendente
+    app.dependency_overrides[api.evolution] = lambda: whats
+    audio = _evento("")
+    audio["data"]["message"] = {"audioMessage": {"seconds": 7}}
+    TestClient(app).post("/webhook/whatsapp", json=audio)
+    assert enviados[0]["text"] == api.MSG_MIDIA

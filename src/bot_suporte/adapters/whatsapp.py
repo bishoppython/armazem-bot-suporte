@@ -10,8 +10,12 @@ import httpx
 log = logging.getLogger(__name__)
 
 
-def extrair_mensagem(evento: dict[str, Any]) -> tuple[str, str] | None:
-    """Devolve (número, texto) de uma mensagem de texto recebida, ou None se o evento não interessa."""
+# Mídia que pede resposta, mas que o bot ainda não entende (sem legenda).
+_MIDIA = ("audioMessage", "imageMessage", "videoMessage", "documentMessage", "documentWithCaptionMessage")
+
+
+def extrair_mensagem(evento: dict[str, Any]) -> tuple[str, str | None] | None:
+    """(número, texto) de uma mensagem recebida; texto None = mídia sem texto; None = ignorar o evento."""
     if evento.get("event") != "messages.upsert":
         return None
     dados = evento.get("data") or {}
@@ -20,11 +24,20 @@ def extrair_mensagem(evento: dict[str, Any]) -> tuple[str, str] | None:
     # Ignora o que o próprio número enviou, grupos e status.
     if chave.get("fromMe") or not jid.endswith("@s.whatsapp.net"):
         return None
+    numero = jid.split("@")[0]
     msg = dados.get("message") or {}
     texto = msg.get("conversation") or (msg.get("extendedTextMessage") or {}).get("text")
     if not texto:
-        return None
-    return jid.split("@")[0], str(texto)
+        for tipo in ("imageMessage", "videoMessage", "documentMessage"):
+            legenda = (msg.get(tipo) or {}).get("caption")
+            if legenda:
+                texto = legenda
+                break
+    if texto:
+        return numero, str(texto)
+    if any(tipo in msg for tipo in _MIDIA):
+        return numero, None
+    return None  # reação, figurinha, enquete etc.
 
 
 def resumo_evento(evento: dict[str, Any]) -> str:

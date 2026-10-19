@@ -15,6 +15,11 @@ from bot_suporte.adapters.whatsapp import EvolutionAPI, extrair_mensagem, resumo
 from bot_suporte.config import Config
 from bot_suporte.servico import Atendente
 
+MSG_MIDIA = (
+    "Por enquanto eu só consigo ler mensagens de texto, ainda não ouço áudios nem vejo imagens. "
+    'Pode escrever a sua dúvida? Se preferir falar com uma pessoa, escreva "atendente".'
+)
+
 log = logging.getLogger(__name__)
 
 
@@ -105,7 +110,10 @@ def criar_app() -> FastAPI:
         tarefas.add_task(responder_whatsapp, at, whats, *recebida)
         return {"status": "recebido"}
 
-    def responder_whatsapp(at: Atendente, whats: EvolutionAPI, numero: str, texto: str) -> None:
+    def responder_whatsapp(at: Atendente, whats: EvolutionAPI, numero: str, texto: str | None) -> None:
+        if texto is None:
+            whats.enviar_texto(numero, MSG_MIDIA)
+            return
         _, r = at.responder(texto, canal="whatsapp", contato=numero)
         whats.enviar_texto(numero, r.texto)
         for fonte in r.fontes:
